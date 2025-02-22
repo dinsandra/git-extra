@@ -1,0 +1,146 @@
+#!/bin/bash
+
+usage() {
+  printf "Operate on conflicting files."
+  printf "\n"
+  printf "\nSynopsis"
+  printf "\n    git conflicting"
+  printf "\n    git conflicting add [<options>]"
+  printf "\n    git conflicting edit [<options>]"
+  printf "\n    git conflicting help"
+  printf "\n    git conflicting ls"
+  printf "\n"
+  printf "\nDescription"
+  printf "\n    Operates on conflicting files."
+  printf "\n"
+  printf "\nCommands"
+  printf "\n    With no arguments does the same thing as the ls command"
+  printf "\n"
+  printf "\n    add [--[no-]check]"
+  printf "\n        Add all conflicting files. Performs a check for conflict markers"
+  printf "\n"
+  printf "\n    edit [--[no-]check] [-e|--editor>]"
+  printf "\n        Open conflicting files in editor. Prefers parameter if passed"
+  printf "\n        otherwise falls back to GIT_EDITOR and then EDITOR env variables."
+  printf "\n        After editing performs a check for conflict markers."
+  printf "\n"
+  printf "\n    ls"
+  printf "\n        Print the paths of all conflicting files."
+  printf "\n"
+  printf "\n    help"
+  printf "\n        Show this message."
+  printf "\n"
+  printf "\nOptions"
+  printf "\n    -n, --[no-]check"
+  printf "\n        By default some commands ensure that no conflict markers"
+  printf "\n        are present in conflicting files, this flag disables this."
+  printf "\n"
+  printf "\n    -e, --editor"
+  printf "\n        The command to invoke to launch the editor. Files to open"
+  printf "\n        will be passed as command line arguments."
+  printf "\n"
+  printf "\nConfiguration"
+  printf "\n"
+  printf "\n    git supports configuration to be stored per repository or globally."
+  printf "\n    The git config flag '--global' controls this."
+  printf "\n"
+  printf "\n    gitconflicting.check"
+  printf "\n        Whether to enable or disable check by default."
+  printf "\n"
+  printf "\n    gitconflicting.editor"
+  printf "\n        An editor to use by default."
+  printf "\n"
+}
+
+cmd=""
+check_value=""
+editor_value=""
+
+while [[ $# -gt 0 ]]
+do
+  if [[ -z "${cmd}" ]]
+  then
+    cmd="${1:-}"
+    shift
+    continue
+  fi
+  case "${1}" in
+    -n|--no-check)
+    check_value=false
+    shift
+    ;;
+    --check)
+    check_value=true
+    shift
+    ;;
+    -e|--editor)
+    shift
+    editor_value=${1}
+    shift
+    ;;
+    *)
+    shift
+    ;;
+  esac
+done
+
+should_check() {
+  config_value=$(git config --get --type=bool gitconflicting.check)
+  echo "${check_value:-${config_value:-true}}"
+}
+
+ls_files() {
+  # Lines starting with u means conflicting
+  # 11th field is the file name
+  git status --porcelain=v2 | grep -E -e "^u" | cut -f 11 -d " "
+}
+
+check() {
+  if [[ $(should_check ) != "true" ]]
+  then
+    return
+  fi
+  files_with_markers=$(ls_files | xargs grep -E -l "<<<<<<<|=======|>>>>>>>" -- )
+  if [[ "${files_with_markers}" != "" ]]
+  then
+    echo "Warning conflict markers left in files: ${files_with_markers}" >&2
+    exit 2
+  fi
+}
+
+edit() {
+  config_value=$(git config --get gitconflicting.editor)
+  editor=${editor_value:-${config_value:-${GIT_EDITOR:-${EDITOR}}}}
+  if [[ "${editor}" == "" ]]
+  then
+    echo "No editor configured" >&2
+    exit 1
+  fi
+
+  # shellcheck disable=SC2046
+  "${editor}" $(ls_files)
+  check
+}
+
+add() {
+  check
+
+  # shellcheck disable=SC2046
+  git add $(ls_files )
+}
+
+case "${cmd}" in
+  add)
+  add
+  ;;
+  edit)
+  edit
+  ;;
+  ls|"")
+  ls_files
+  ;;
+  *)
+  usage
+  ;;
+esac
+
