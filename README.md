@@ -4,11 +4,13 @@ A set of tools that simplify working with git, especially if you use the rebase
 workflow.
 
 Included tools:
+* [git-autosquash] - Tool to automate usage of git rebase --autosquash
 * [git-conflicting] - Operate on conflicting files
 * [git-continue] - Shorthand for rebase, merge or cherry-pick --continue
 * [git-make-branchname] - Create a usable branch name from a commit
 * [git-set] - Easily and safely force-push to forks or private branches
 
+[git-autosquash]: docs/git-autosquash.md
 [git-conflicting]: docs/git-conflicting.md
 [git-continue]: docs/git-continue.md
 [git-make-branchname]: docs/git-make-branchname.md
