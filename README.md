@@ -5,10 +5,12 @@ workflow.
 
 Included tools:
 * [git-conflicting] - Operate on conflicting files
+* [git-continue] - Shorthand for rebase, merge or cherry-pick --continue
 * [git-make-branchname] - Create a usable branch name from a commit
 * [git-set] - Easily and safely force-push to forks or private branches
 
 [git-conflicting]: docs/git-conflicting.md
+[git-continue]: docs/git-continue.md
 [git-make-branchname]: docs/git-make-branchname.md
 [git-set]: docs/git-set.md
 

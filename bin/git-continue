@@ -1,0 +1,17 @@
+#!/bin/bash
+git_dir=$(git rev-parse --git-dir)
+merge_head="${git_dir}/MERGE_HEAD"
+rebase_apply="${git_dir}/rebase-apply"
+rebase_merge="${git_dir}/rebase-merge"
+cherry_pick_head="${git_dir}/CHERRY_PICK_HEAD"
+
+if [[ -f ${merge_head} ]]; then
+  git merge --continue
+elif [[ -f ${cherry_pick_head} ]]; then
+  git cherry-pick --continue
+elif [[ -d ${rebase_apply} ]] || [[ -d ${rebase_merge} ]]; then
+  git rebase --continue
+else
+  echo "Nothing to continue" >&2
+fi
+
