@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# A script that produces a valid branch name from the summary of a git commit
+# Usage:
+# git branchname [REF]
+#
+# If REF is unspecified, defaults to HEAD
+#
+# Steps taken
+# 1. Read summary of REF or HEAD
+# 2. Replaces "%" with "pct"
+# 3. Replaces any of "[](){}. _/" with "-"
+# 4. Lowercases
+# 5. Removes any characters other than "a-z0-9-"
+# 6. Compacts subsequent dashes into single dash
+#
+# Examples
+# "Add new feature" -> "add-new-feature"
+# "Roll out new feature to 100% of users" -> "roll-out-new-feature-to-100pct-of-users"
+# "fix(system/component): Address memory issue" -> "fix-system-component-address-memory-issue"
+
+REF="${1:-HEAD}"
+NAME="$(git log -1 --pretty="format:%s" "${REF}")"
+
+NAME="$(echo "${NAME}" | sed -E -e "s/%/pct/g")"
+NAME="$(echo "${NAME}" | sed -E -e "s#[]. /(){}_[]#-#g")"
+NAME="$(echo "${NAME}" | tr '[:upper:]' '[:lower:]')"
+NAME="$(echo "${NAME}" | tr -C -d 'a-z0-9-')"
+NAME="$(echo "${NAME}" | sed -E -e "s/--+/-/g")"
+echo "${NAME}"
