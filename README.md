@@ -5,8 +5,10 @@ workflow.
 
 Included tools:
 * [git-make-branchname] - Create a usable branch name from a commit
+* [git-set] - Easily and safely force-push to forks or private branches
 
 [git-make-branchname]: docs/git-make-branchname.md
+[git-set]: docs/git-set.md
 
 ## Testing
 
