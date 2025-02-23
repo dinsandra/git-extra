@@ -5,6 +5,7 @@ workflow.
 
 Included tools:
 * [git-autosquash] - Tool to automate usage of git rebase --autosquash
+* [git-branches] - List remote branches matching git-set config
 * [git-conflicting] - Operate on conflicting files
 * [git-continue] - Shorthand for rebase, merge or cherry-pick --continue
 * [git-get] - Shorthand for git reset --hard that goes with git-set
@@ -12,6 +13,7 @@ Included tools:
 * [git-set] - Easily and safely force-push to forks or private branches
 
 [git-autosquash]: docs/git-autosquash.md
+[git-branches]: docs/git-branches.md
 [git-conflicting]: docs/git-conflicting.md
 [git-continue]: docs/git-continue.md
 [git-get]: docs/git-get.md
