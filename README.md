@@ -9,6 +9,7 @@ Included tools:
 * [git-conflicting] - Operate on conflicting files
 * [git-continue] - Shorthand for rebase, merge or cherry-pick --continue
 * [git-fixup] - Shorthand for git commit --fixup
+* [git-fixup-targets] - Enumerate potential candidates for git-fixup
 * [git-get] - Shorthand for git reset --hard that goes with git-set
 * [git-make-branchname] - Create a usable branch name from a commit
 * [git-set] - Easily and safely force-push to forks or private branches
@@ -18,6 +19,7 @@ Included tools:
 [git-conflicting]: docs/git-conflicting.md
 [git-continue]: docs/git-continue.md
 [git-fixup]: docs/git-fixup.md
+[git-fixup-targets]: docs/git-fixup-targets.md
 [git-get]: docs/git-get.md
 [git-make-branchname]: docs/git-make-branchname.md
 [git-set]: docs/git-set.md
