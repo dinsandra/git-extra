@@ -1,0 +1,135 @@
+#!/bin/bash
+
+usage() {
+  printf "Update single remote branch."
+  printf "\n"
+  printf "\nSynopsis"
+  printf "\n    git set [<options>] <branch-name> [<commit-ref>]"
+  printf "\n    git set -g [<options>] [<commit-ref>]"
+  printf "\n"
+  printf "\nDescription"
+  printf "\n    A wrapper around git push that provides some utilities with"
+  printf "\n    regards to branch naming and updating."
+  printf "\n    <commit-ref> defaults to HEAD unless specified"
+  printf "\n"
+  printf "\n    Must be configured before it will work."
+  printf "\n    Needs gitset.defaultremote to know which remote to update"
+  printf "\n"
+  printf "\nOptions"
+  printf "\n    -n, --dry-run"
+  printf "\n        Do not actually push anything, passed on to git push"
+  printf "\n"
+  printf "\n    -g, --guess"
+  printf "\n        Use git-make-branchname to infer a branch name from the summary"
+  printf "\n        of the commit-ref"
+  printf "\n"
+  printf "\n    -v, --verbose"
+  printf "\n        Print additional information"
+  printf "\n"
+  printf "\nConfiguration parameters:"
+  printf "\n"
+  printf "\n    git supports configuration to be stored per repository or globally."
+  printf "\n    The git config flag '--global' controls this."
+  printf "\n"
+  printf "\n    gitset.defaultremote"
+  printf "\n        The remote to push to. Must be a registered remote."
+  printf "\n        If 'origin' a branchPrefix is strongly recommended!"
+  printf "\n        Example usage 'git config --global gitset.defaultremote my-cool-remote'"
+  printf "\n"
+  printf "\n    gitset.branchPrefix"
+  printf "\n        A prefix to use for all generated branch names."
+  printf "\n        Example 'my-username/'"
+  printf "\n"
+  printf "\n    gitset.allowOriginWoPrefix"
+  printf "\n        Setting defaultremote to origin while having no"
+  printf "\n        branchPrefix can be very dangerous."
+  printf "\n        This setting allows the caller to opt out of this warning."
+  printf "\n"
+}
+
+PARAMS=true
+GUESS=false
+HELP=false
+VERBOSE=false
+
+while ${PARAMS}
+do
+  case $1 in
+    -n|--dry-run)
+    DRY_RUN="--dry-run"
+    shift
+    ;;
+    -g|--guess)
+    GUESS=true
+    shift
+    ;;
+    -h|--help)
+    HELP=true
+    shift
+    ;;
+    -v|--verbose)
+    VERBOSE=true
+    shift
+    ;;
+    *)
+    PARAMS=false
+    ;;
+  esac
+done
+
+if (${HELP});
+then
+  usage;
+  exit 0;
+fi
+
+REMOTE=$(git config --get gitset.defaultremote)
+BRANCH_PREFIX=$(git config --get gitset.branchPrefix)
+
+if [[ -z "${REMOTE}" ]]
+then
+  echo "No remote configured. Use 'git config --global gitset.defaultremote <remotename>' to set default remote"
+  exit 1
+fi
+
+if [[ "${REMOTE}" == "origin" ]]
+then
+  if [[ -z "${BRANCH_PREFIX}" ]]
+  then
+    ALLOW_ORIGIN_WO_PREFIX=$(git config --get --type bool gitset.allowOriginWoPrefix)
+    if [[ "${ALLOW_ORIGIN_WO_PREFIX}" != "true" ]]
+    then
+      echo "Remote is 'origin', but no branch prefix. This is very dangerous!"
+      echo "Use 'git config gitset.branchPrefix <branch-prefix>'"
+      echo "To ignore warning this: 'git config gitset.allowOriginWoPrefix 1'"
+      exit 2
+    fi
+  fi
+fi
+
+if [[ ${GUESS} == true ]]
+then
+  REF=${1:-"HEAD"}
+  BRANCH=$(git make-branchname "${REF}")
+
+elif [[ $# -ge 1 ]]
+then
+  BRANCH=${1}
+  REF=${2:-"HEAD"}
+  if [[ $(echo "${BRANCH}" | tr '[:upper:]' '[:lower:]') != "${BRANCH}" ]]
+  then
+    echo "Branch names should be lower case, did you accidentally forget branch name?"
+    exit 1
+  fi
+else
+  echo "Must have branch name or --guess"
+  exit 1
+fi
+
+if [[ ${VERBOSE} == true ]]
+then
+  echo git push ${DRY_RUN+"${DRY_RUN}"} --force-with-lease "${REMOTE}" "${REF}:refs/heads/${BRANCH_PREFIX}${BRANCH}"
+fi
+
+git push ${DRY_RUN+"${DRY_RUN}"} --force-with-lease "${REMOTE}" "${REF}:refs/heads/${BRANCH_PREFIX}${BRANCH}"
+

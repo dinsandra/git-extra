@@ -1,0 +1,55 @@
+#!/bin/bash
+if [ "$#" -lt 1 ]; then
+  echo "Must have branch name"
+  exit 1
+fi
+
+REMOTE=$(git config --get gitset.defaultremote)
+BRANCH_PREFIX=$(git config --get gitset.branchPrefix)
+BRANCH=${1:-}
+
+if [[ -z "${REMOTE}" ]]
+then
+  echo "No remote configured. Use 'git config --global gitset.defaultremote <remotename>' to set default remote"
+  exit 1
+fi
+
+if [[ -z "${BRANCH}" ]]
+then
+  echo "No branch specified" >&2
+  exit 1
+fi
+
+FORCE=false
+
+while [[ $# -gt 0 ]]
+do
+  case ${1} in
+    -f|--force)
+    FORCE=true
+    shift
+    ;;
+    *)
+    ;;
+  esac
+done
+
+if [[ "${FORCE}" != "true" ]]
+then
+  UNCOMMITTED_CHANGES=$(git status --porcelain=v2 | grep -e "^[12] ")
+  if [[ "${UNCOMMITTED_CHANGES}" != "" ]]
+  then
+    echo "Uncommited changes present! Use --force/-f to override" >&2
+    exit 3
+  fi
+
+  REMOTE_REFS=$(git show-ref | grep refs/remotes/ | grep $(git rev-parse HEAD))
+  if [[ "${REMOTE_REFS}" != "" ]]
+  then
+    echo "No remote branch tracking HEAD, this would lose data. Use --force/-f to override" >&2
+    exit 3
+  fi
+fi
+
+
+git reset --hard "refs/remotes/${REMOTE}/${BRANCH_PREFIX}${BRANCH}"

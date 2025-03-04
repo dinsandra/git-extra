@@ -1,0 +1,35 @@
+#!/bin/bash
+
+function regExEscape {
+  printf "%q" "${1}"
+}
+
+REMOTE=$(git config --get gitautosquash.remote)
+REMOTE=${REMOTE:-origin}
+MAIN_BRANCH="refs/remotes/${REMOTE}/HEAD"
+
+FIXUPS=$(git log --grep "^fixup! " --pretty="format:%H %s" "${MAIN_BRANCH}..HEAD" | grep "fixup! " | cut -f 1 -d " ")
+EARLIEST=
+
+for H in ${FIXUPS}
+do
+  SUBJECT=$(git log -1 --pretty="format:%s" "${H}")
+  SUBJECT=${SUBJECT:7}
+  SUBJECT=$(regExEscape "${SUBJECT}")
+  # echo "SUBJECT ${SUBJECT}"
+  
+  ORIG=$(git rev-parse "${H}""^{/^${SUBJECT}}" )
+  # echo "ORIG ${ORIG}"
+
+  if [ -z "${EARLIEST}" ]
+    then EARLIEST=${ORIG}
+  elif [ -z "$(git log --oneline "${EARLIEST}".."${ORIG}")" ]
+    then EARLIEST=${ORIG}
+  fi
+done
+
+if [ -n "${EARLIEST}" ]
+  then GIT_EDITOR=true git rebase -i "${EARLIEST}"^ --autosquash
+else
+  echo "Nothing to do" >&2
+fi
