@@ -1,3 +1,39 @@
 #!/bin/bash
 
-git commit --fixup "$@"
+if [[ $# -eq 0 ]]; then
+  echo "Usage git fixup [-i]/[<ref>]"
+  exit 1
+fi
+
+if [[ "${1}" == "-i" ]]; then
+  targets=$(git fixup-targets)
+
+  IFS=$'\n' read -rd '' -a lines <<<"${targets}"
+  if [[ "${#lines[@]}" -eq 0 ]]; then
+    echo "No fixup targets available"
+    exit 0
+  fi
+
+  for ((i=0; i < ${#lines[@]}; i++)); do
+    echo "[$((i+1))]: ${lines[${i}]}"
+  done
+
+  echo "Select target: [q/0-9+]"
+  read -p "> " selected_target
+
+  if [[ "${selected_target}" == "q" ]]; then
+    exit 0
+  fi
+  if [[ -z "${selected_target}" ]] \
+     || [[ "${selected_target}" -lt 1 ]]\
+     || [[ "${selected_target}" -gt "${#lines[@]}" ]]; then
+    echo "Invalid option" >&2
+    exit 1
+  fi
+
+  target_hash=$(cut -f 1 -d " " <<<"${lines[selected_target - 1]}")
+  git commit --fixup "${target_hash}"
+  exit 0
+fi
+
+git commit --fixup "${1}"
