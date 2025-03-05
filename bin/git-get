@@ -6,7 +6,6 @@ fi
 
 REMOTE=$(git config --get gitset.defaultremote)
 BRANCH_PREFIX=$(git config --get gitset.branchPrefix)
-BRANCH=${1:-}
 
 if [[ -z "${REMOTE}" ]]
 then
@@ -14,13 +13,8 @@ then
   exit 1
 fi
 
-if [[ -z "${BRANCH}" ]]
-then
-  echo "No branch specified" >&2
-  exit 1
-fi
-
 FORCE=false
+BRANCH=""
 
 while [[ $# -gt 0 ]]
 do
@@ -30,9 +24,23 @@ do
     shift
     ;;
     *)
+    if [[ -n "${BRANCH}" ]]
+    then
+      echo "Multiple branches specified" >&2
+      exit 2
+    fi
+    BRANCH=${1}
+    shift
     ;;
   esac
 done
+
+if [[ -z "${BRANCH}" ]]
+then
+  echo "No branch specified" >&2
+  exit 1
+fi
+
 
 if [[ "${FORCE}" != "true" ]]
 then
@@ -44,7 +52,7 @@ then
   fi
 
   REMOTE_REFS=$(git show-ref | grep refs/remotes/ | grep $(git rev-parse HEAD))
-  if [[ "${REMOTE_REFS}" != "" ]]
+  if [[ "${REMOTE_REFS}" == "" ]]
   then
     echo "No remote branch tracking HEAD, this would lose data. Use --force/-f to override" >&2
     exit 3
