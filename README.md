@@ -38,7 +38,7 @@ $ git add -p            # Add relevant changes
 $ git commit            # Create commits
                         #   repeat as needed
 $ git set -g            # Push and create remote branch
-                        # .. after revew comments, do fixes
+                        # .. after review comments, do fixes
 $ git add -p            # Add fixes
 $ git fixup-targets     # List fixup targets
 $ git fixup cafeha5h    # Create commits
@@ -87,7 +87,7 @@ $ git config gitset.branchPrefix my-prefix/
 
 ## Testing
 
-This repository relies on [shellspec] to verify the functionaly. To run tests
+This repository relies on [shellspec] to verify the functionality. To run tests
 install and run `$ shellspec`
 
 [shellspec]: https://github.com/shellspec/shellspec
