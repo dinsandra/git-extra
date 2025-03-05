@@ -40,8 +40,7 @@ $ git commit            # Create commits
 $ git set -g            # Push and create remote branch
                         # .. after review comments, do fixes
 $ git add -p            # Add fixes
-$ git fixup-targets     # List fixup targets
-$ git fixup cafeha5h    # Create commits
+$ git fixup -i          # List fixup targets and select target
                         #   repeat as needed
 $ git autosquash        # Apply fixups
 $ git conflicting edit  # During the rebase, if there are conflicts quickly
