@@ -49,7 +49,7 @@ then
     exit 3
   fi
 
-  remote_refs=$(git show-ref | grep refs/remotes/ | grep $(git rev-parse HEAD))
+  remote_refs=$(git show-ref | grep refs/remotes/ | grep "$(git rev-parse HEAD)")
   if [[ "${remote_refs}" == "" ]]
   then
     echo "No remote branch tracking HEAD, this would lose data. Use --force/-f to override" >&2
