@@ -2,8 +2,7 @@
 
 remote=$(git config --get gitset.defaultremote)
 
-if [[ -z "${remote}" ]]
-then
+if [[ -z "${remote}" ]]; then
   echo "No remote configured. Use 'git config --global gitset.defaultremote <remotename>' to set default remote"
   exit 1
 fi

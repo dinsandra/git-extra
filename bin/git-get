@@ -7,8 +7,7 @@ fi
 remote=$(git config --get gitset.defaultremote)
 branch_prefix=$(git config --get gitset.branchPrefix)
 
-if [[ -z "${remote}" ]]
-then
+if [[ -z "${remote}" ]]; then
   echo "No remote configured. Use 'git config --global gitset.defaultremote <remotename>' to set default remote"
   exit 1
 fi
@@ -17,8 +16,7 @@ force=false
 branch=""
 interactive=false
 
-while [[ $# -gt 0 ]]
-do
+while [[ $# -gt 0 ]]; do
   case ${1} in
     -f|--force)
     force=true
@@ -29,8 +27,7 @@ do
     shift
     ;;
     *)
-    if [[ -n "${branch}" ]]
-    then
+    if [[ -n "${branch}" ]]; then
       echo "Multiple branches specified" >&2
       exit 2
     fi
@@ -40,25 +37,21 @@ do
   esac
 done
 
-if [[ "${force}" != "true" ]]
-then
+if [[ "${force}" != "true" ]]; then
   uncommitted_changes=$(git status --porcelain=v2 | grep -e "^[12] ")
-  if [[ "${uncommitted_changes}" != "" ]]
-  then
+  if [[ "${uncommitted_changes}" != "" ]]; then
     echo "Uncommited changes present! Use --force/-f to override" >&2
     exit 3
   fi
 
   remote_refs=$(git show-ref | grep refs/remotes/ | grep "$(git rev-parse HEAD)")
-  if [[ "${remote_refs}" == "" ]]
-  then
+  if [[ "${remote_refs}" == "" ]]; then
     echo "No remote branch tracking HEAD, this would lose data. Use --force/-f to override" >&2
     exit 3
   fi
 fi
 
-if [[ "${interactive}" == true ]]
-then
+if [[ "${interactive}" == true ]]; then
   branches=$(git branches)
   echo "${branches}"
 
@@ -88,8 +81,7 @@ then
   branch=${lines[selected_branch - 1]}
 fi
 
-if [[ -z "${branch}" ]]
-then
+if [[ -z "${branch}" ]]; then
   echo "No branch specified" >&2
   exit 1
 fi

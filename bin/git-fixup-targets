@@ -8,8 +8,7 @@ first_merge=$(git log --merges --first-parent -1 --pretty="format:%H")
 
 base_commit=${main_branch}
 
-if [[ -n "${first_merge}" ]]
-then
+if [[ -n "${first_merge}" ]]; then
   if [ -z "$(git log --oneline "${first_merge}".."${base_commit}")" ]
     then base_commit=${first_merge}
   fi
@@ -17,8 +16,7 @@ fi
 
 changes=$(git diff --staged --name-only)
 
-if [[ -z "${changes}" ]]
-then
+if [[ -z "${changes}" ]]; then
   echo "Nothing matched" >&2
   exit
 fi

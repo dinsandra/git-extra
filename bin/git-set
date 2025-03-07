@@ -52,8 +52,7 @@ guess=false
 show_help=false
 verbose=false
 
-while ${params}
-do
+while ${params}; do
   case $1 in
     -n|--dry-run)
     dry_run="--dry-run"
@@ -77,8 +76,7 @@ do
   esac
 done
 
-if (${show_help});
-then
+if (${show_help}); then
   usage;
   exit 0;
 fi
@@ -86,19 +84,15 @@ fi
 remote=$(git config --get gitset.defaultremote)
 branch_prefix=$(git config --get gitset.branchPrefix)
 
-if [[ -z "${remote}" ]]
-then
+if [[ -z "${remote}" ]]; then
   echo "No remote configured. Use 'git config --global gitset.defaultremote <remotename>' to set default remote"
   exit 1
 fi
 
-if [[ "${remote}" == "origin" ]]
-then
-  if [[ -z "${branch_prefix}" ]]
-  then
+if [[ "${remote}" == "origin" ]]; then
+  if [[ -z "${branch_prefix}" ]]; then
     allow_origin_wo_prefix=$(git config --get --type bool gitset.allowOriginWoPrefix)
-    if [[ "${allow_origin_wo_prefix}" != "true" ]]
-    then
+    if [[ "${allow_origin_wo_prefix}" != "true" ]]; then
       echo "Remote is 'origin', but no branch prefix. This is very dangerous!"
       echo "Use 'git config gitset.branchPrefix <branch-prefix>'"
       echo "To ignore warning this: 'git config gitset.allowOriginWoPrefix 1'"
@@ -107,17 +101,14 @@ then
   fi
 fi
 
-if [[ ${guess} == true ]]
-then
+if [[ ${guess} == true ]]; then
   ref=${1:-"HEAD"}
   branch=$(git make-branchname "${ref}")
 
-elif [[ $# -ge 1 ]]
-then
+elif [[ $# -ge 1 ]]; then
   branch=${1}
   ref=${2:-"HEAD"}
-  if [[ $(echo "${branch}" | tr '[:upper:]' '[:lower:]') != "${branch}" ]]
-  then
+  if [[ $(echo "${branch}" | tr '[:upper:]' '[:lower:]') != "${branch}" ]]; then
     echo "Branch names should be lower case, did you accidentally forget branch name?"
     exit 1
   fi
@@ -126,8 +117,7 @@ else
   exit 1
 fi
 
-if [[ ${verbose} == true ]]
-then
+if [[ ${verbose} == true ]]; then
   echo git push ${dry_run+"${dry_run}"} --force-with-lease "${remote}" "${ref}:refs/heads/${branch_prefix}${branch}"
 fi
 

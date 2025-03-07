@@ -11,8 +11,7 @@ main_branch="refs/remotes/${remote}/HEAD"
 fixups=$(git log --grep "^fixup! " --pretty="format:%H %s" "${main_branch}..HEAD" | grep "fixup! " | cut -f 1 -d " ")
 earliest=
 
-for h in ${fixups}
-do
+for h in ${fixups}; do
   subject=$(git log -1 --pretty="format:%s" "${h}")
   subject=${subject:7}
   subject=$(regExEscape "${subject}")
@@ -21,15 +20,15 @@ do
   orig=$(git rev-parse "${h}""^{/^${subject}}" )
   # echo "ORIG ${orig}"
 
-  if [ -z "${earliest}" ]
-    then earliest=${orig}
-  elif [ -z "$(git log --oneline "${earliest}".."${orig}")" ]
-    then earliest=${orig}
+  if [ -z "${earliest}" ]; then
+    earliest=${orig}
+  elif [ -z "$(git log --oneline "${earliest}".."${orig}")" ]; then
+    earliest=${orig}
   fi
 done
 
-if [ -n "${earliest}" ]
-  then GIT_EDITOR=true git rebase -i "${earliest}"^ --autosquash
+if [ -n "${earliest}" ]; then
+  GIT_EDITOR=true git rebase -i "${earliest}"^ --autosquash
 else
   echo "Nothing to do" >&2
 fi
