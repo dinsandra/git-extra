@@ -4,94 +4,94 @@ if [ "$#" -lt 1 ]; then
   exit 1
 fi
 
-REMOTE=$(git config --get gitset.defaultremote)
-BRANCH_PREFIX=$(git config --get gitset.branchPrefix)
+remote=$(git config --get gitset.defaultremote)
+branch_prefix=$(git config --get gitset.branchPrefix)
 
-if [[ -z "${REMOTE}" ]]
+if [[ -z "${remote}" ]]
 then
   echo "No remote configured. Use 'git config --global gitset.defaultremote <remotename>' to set default remote"
   exit 1
 fi
 
-FORCE=false
-BRANCH=""
-INTERACTIVE=false
+force=false
+branch=""
+interactive=false
 
 while [[ $# -gt 0 ]]
 do
   case ${1} in
     -f|--force)
-    FORCE=true
+    force=true
     shift
     ;;
     -i)
-    INTERACTIVE=true
+    interactive=true
     shift
     ;;
     *)
-    if [[ -n "${BRANCH}" ]]
+    if [[ -n "${branch}" ]]
     then
       echo "Multiple branches specified" >&2
       exit 2
     fi
-    BRANCH=${1}
+    branch=${1}
     shift
     ;;
   esac
 done
 
-if [[ "${FORCE}" != "true" ]]
+if [[ "${force}" != "true" ]]
 then
-  UNCOMMITTED_CHANGES=$(git status --porcelain=v2 | grep -e "^[12] ")
-  if [[ "${UNCOMMITTED_CHANGES}" != "" ]]
+  uncommitted_changes=$(git status --porcelain=v2 | grep -e "^[12] ")
+  if [[ "${uncommitted_changes}" != "" ]]
   then
     echo "Uncommited changes present! Use --force/-f to override" >&2
     exit 3
   fi
 
-  REMOTE_REFS=$(git show-ref | grep refs/remotes/ | grep $(git rev-parse HEAD))
-  if [[ "${REMOTE_REFS}" == "" ]]
+  remote_refs=$(git show-ref | grep refs/remotes/ | grep $(git rev-parse HEAD))
+  if [[ "${remote_refs}" == "" ]]
   then
     echo "No remote branch tracking HEAD, this would lose data. Use --force/-f to override" >&2
     exit 3
   fi
 fi
 
-if [[ "${INTERACTIVE}" == true ]]
+if [[ "${interactive}" == true ]]
 then
-  BRANCHES=$(git branches)
-  echo "${BRANCHES}"
+  branches=$(git branches)
+  echo "${branches}"
 
-  IFS=$'\n' read -rd '' -a LINES <<<"${BRANCHES}"
-  if [[ "${#LINES[@]}" -eq 0 ]]; then
+  IFS=$'\n' read -rd '' -a lines <<<"${branches}"
+  if [[ "${#lines[@]}" -eq 0 ]]; then
     echo "No matching remote branches"
     exit 0
   fi
 
-  for ((i=0; i < ${#LINES[@]}; i++)); do
-    echo "[$((i+1))]: ${LINES[${i}]}"
+  for ((i=0; i < ${#lines[@]}; i++)); do
+    echo "[$((i+1))]: ${lines[${i}]}"
   done
 
   echo "Select branch: [q/0-9+]"
-  read -p "> " SELECTED_BRANCH
+  read -p "> " selected_branch
 
-  if [[ "${SELECTED_BRANCH}" == "q" ]]; then
+  if [[ "${selected_branch}" == "q" ]]; then
     exit 0
   fi
-  if [[ -z "${SELECTED_BRANCH}" ]] \
-     || [[ "${SELECTED_BRANCH}" -lt 1 ]]\
-     || [[ "${SELECTED_BRANCH}" -gt "${#LINES[@]}" ]]; then
+  if [[ -z "${selected_branch}" ]] \
+     || [[ "${selected_branch}" -lt 1 ]]\
+     || [[ "${selected_branch}" -gt "${#lines[@]}" ]]; then
     echo "Invalid option" >&2
     exit 1
   fi
 
-  BRANCH=${LINES[SELECTED_BRANCH - 1]}
+  branch=${lines[selected_branch - 1]}
 fi
 
-if [[ -z "${BRANCH}" ]]
+if [[ -z "${branch}" ]]
 then
   echo "No branch specified" >&2
   exit 1
 fi
 
-git reset --hard "refs/remotes/${REMOTE}/${BRANCH_PREFIX}${BRANCH}"
+git reset --hard "refs/remotes/${remote}/${branch_prefix}${branch}"

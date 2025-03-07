@@ -1,27 +1,27 @@
 #!/bin/bash
 
-REMOTE=$(git config --get gitautosquash.remote)
-REMOTE=${REMOTE:-origin}
-MAIN_BRANCH="refs/remotes/${REMOTE}/HEAD"
+remote=$(git config --get gitautosquash.remote)
+remote=${remote:-origin}
+main_branch="refs/remotes/${remote}/HEAD"
 
-FIRST_MERGE=$(git log --merges --first-parent -1 --pretty="format:%H")
+first_merge=$(git log --merges --first-parent -1 --pretty="format:%H")
 
-BASE_COMMIT=${MAIN_BRANCH}
+base_commit=${main_branch}
 
-if [[ -n "${FIRST_MERGE}" ]]
+if [[ -n "${first_merge}" ]]
 then
-  if [ -z "$(git log --oneline "${FIRST_MERGE}".."${BASE_COMMIT}")" ]
-    then BASE_COMMIT=${FIRST_MERGE}
+  if [ -z "$(git log --oneline "${first_merge}".."${base_commit}")" ]
+    then base_commit=${first_merge}
   fi
 fi
 
-CHANGES=$(git diff --staged --name-only)
+changes=$(git diff --staged --name-only)
 
-if [[ -z "${CHANGES}" ]]
+if [[ -z "${changes}" ]]
 then
   echo "Nothing matched" >&2
   exit
 fi
 
 # shellcheck disable=SC2086
-git log --oneline "$@" "${BASE_COMMIT}"..HEAD -- ${CHANGES}
+git log --oneline "$@" "${base_commit}"..HEAD -- ${changes}

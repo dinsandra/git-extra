@@ -4,32 +4,32 @@ function regExEscape {
   printf "%q" "${1}"
 }
 
-REMOTE=$(git config --get gitautosquash.remote)
-REMOTE=${REMOTE:-origin}
-MAIN_BRANCH="refs/remotes/${REMOTE}/HEAD"
+remote=$(git config --get gitautosquash.remote)
+remote=${remote:-origin}
+main_branch="refs/remotes/${remote}/HEAD"
 
-FIXUPS=$(git log --grep "^fixup! " --pretty="format:%H %s" "${MAIN_BRANCH}..HEAD" | grep "fixup! " | cut -f 1 -d " ")
-EARLIEST=
+fixups=$(git log --grep "^fixup! " --pretty="format:%H %s" "${main_branch}..HEAD" | grep "fixup! " | cut -f 1 -d " ")
+earliest=
 
-for H in ${FIXUPS}
+for h in ${fixups}
 do
-  SUBJECT=$(git log -1 --pretty="format:%s" "${H}")
-  SUBJECT=${SUBJECT:7}
-  SUBJECT=$(regExEscape "${SUBJECT}")
-  # echo "SUBJECT ${SUBJECT}"
+  subject=$(git log -1 --pretty="format:%s" "${h}")
+  subject=${subject:7}
+  subject=$(regExEscape "${subject}")
+  # echo "SUBJECT ${subject}"
   
-  ORIG=$(git rev-parse "${H}""^{/^${SUBJECT}}" )
-  # echo "ORIG ${ORIG}"
+  orig=$(git rev-parse "${h}""^{/^${subject}}" )
+  # echo "ORIG ${orig}"
 
-  if [ -z "${EARLIEST}" ]
-    then EARLIEST=${ORIG}
-  elif [ -z "$(git log --oneline "${EARLIEST}".."${ORIG}")" ]
-    then EARLIEST=${ORIG}
+  if [ -z "${earliest}" ]
+    then earliest=${orig}
+  elif [ -z "$(git log --oneline "${earliest}".."${orig}")" ]
+    then earliest=${orig}
   fi
 done
 
-if [ -n "${EARLIEST}" ]
-  then GIT_EDITOR=true git rebase -i "${EARLIEST}"^ --autosquash
+if [ -n "${earliest}" ]
+  then GIT_EDITOR=true git rebase -i "${earliest}"^ --autosquash
 else
   echo "Nothing to do" >&2
 fi

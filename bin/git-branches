@@ -1,15 +1,15 @@
 #!/bin/bash
 
-REMOTE=$(git config --get gitset.defaultremote)
+remote=$(git config --get gitset.defaultremote)
 
-if [[ -z "${REMOTE}" ]]
+if [[ -z "${remote}" ]]
 then
   echo "No remote configured. Use 'git config --global gitset.defaultremote <remotename>' to set default remote"
   exit 1
 fi
 
-BRANCH_PREFIX=$(git config --get gitset.branchPrefix)
-PREFIX="${REMOTE}/${BRANCH_PREFIX}"
-PREFIX_LENGTH=$(echo "  remotes/${PREFIX}" | wc -c | tr -d " ")
+branch_prefix=$(git config --get gitset.branchPrefix)
+prefix="${remote}/${branch_prefix}"
+prefix_length=$(echo "  remotes/${prefix}" | wc -c | tr -d " ")
 
-git branch -a -l "${PREFIX}*" | cut -c "${PREFIX_LENGTH}"-
+git branch -a -l "${prefix}*" | cut -c "${prefix_length}"-
