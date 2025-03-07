@@ -73,7 +73,7 @@ then
   done
 
   echo "Select branch: [q/0-9+]"
-  read -p "> " selected_branch
+  read -r -p "> " selected_branch
 
   if [[ "${selected_branch}" == "q" ]]; then
     exit 0
