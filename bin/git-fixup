@@ -19,7 +19,7 @@ if [[ "${1}" == "-i" ]]; then
   done
 
   echo "Select target: [q/0-9+]"
-  read -p "> " selected_target
+  read -r -p "> " selected_target
 
   if [[ "${selected_target}" == "q" ]]; then
     exit 0

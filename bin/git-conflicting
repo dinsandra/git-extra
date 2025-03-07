@@ -56,10 +56,8 @@ cmd=""
 check_value=""
 editor_value=""
 
-while [[ $# -gt 0 ]]
-do
-  if [[ -z "${cmd}" ]]
-  then
+while [[ $# -gt 0 ]]; do
+  if [[ -z "${cmd}" ]]; then
     cmd="${1:-}"
     shift
     continue
@@ -96,13 +94,11 @@ ls_files() {
 }
 
 check() {
-  if [[ $(should_check ) != "true" ]]
-  then
+  if [[ $(should_check ) != "true" ]]; then
     return
   fi
   files_with_markers=$(ls_files | xargs grep -E -l "<<<<<<<|=======|>>>>>>>" -- )
-  if [[ "${files_with_markers}" != "" ]]
-  then
+  if [[ "${files_with_markers}" != "" ]]; then
     echo "Warning conflict markers left in files: ${files_with_markers}" >&2
     exit 2
   fi
@@ -111,8 +107,7 @@ check() {
 edit() {
   config_value=$(git config --get gitconflicting.editor)
   editor=${editor_value:-${config_value:-${GIT_EDITOR:-${EDITOR}}}}
-  if [[ "${editor}" == "" ]]
-  then
+  if [[ "${editor}" == "" ]]; then
     echo "No editor configured" >&2
     exit 1
   fi
