@@ -15,12 +15,17 @@ fi
 
 FORCE=false
 BRANCH=""
+INTERACTIVE=false
 
 while [[ $# -gt 0 ]]
 do
   case ${1} in
     -f|--force)
     FORCE=true
+    shift
+    ;;
+    -i)
+    INTERACTIVE=true
     shift
     ;;
     *)
@@ -34,13 +39,6 @@ do
     ;;
   esac
 done
-
-if [[ -z "${BRANCH}" ]]
-then
-  echo "No branch specified" >&2
-  exit 1
-fi
-
 
 if [[ "${FORCE}" != "true" ]]
 then
@@ -59,5 +57,41 @@ then
   fi
 fi
 
+if [[ "${INTERACTIVE}" == true ]]
+then
+  BRANCHES=$(git branches)
+  echo "${BRANCHES}"
+
+  IFS=$'\n' read -rd '' -a LINES <<<"${BRANCHES}"
+  if [[ "${#LINES[@]}" -eq 0 ]]; then
+    echo "No matching remote branches"
+    exit 0
+  fi
+
+  for ((i=0; i < ${#LINES[@]}; i++)); do
+    echo "[$((i+1))]: ${LINES[${i}]}"
+  done
+
+  echo "Select branch: [q/0-9+]"
+  read -p "> " SELECTED_BRANCH
+
+  if [[ "${SELECTED_BRANCH}" == "q" ]]; then
+    exit 0
+  fi
+  if [[ -z "${SELECTED_BRANCH}" ]] \
+     || [[ "${SELECTED_BRANCH}" -lt 1 ]]\
+     || [[ "${SELECTED_BRANCH}" -gt "${#LINES[@]}" ]]; then
+    echo "Invalid option" >&2
+    exit 1
+  fi
+
+  BRANCH=${LINES[SELECTED_BRANCH - 1]}
+fi
+
+if [[ -z "${BRANCH}" ]]
+then
+  echo "No branch specified" >&2
+  exit 1
+fi
 
 git reset --hard "refs/remotes/${REMOTE}/${BRANCH_PREFIX}${BRANCH}"
