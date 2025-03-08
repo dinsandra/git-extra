@@ -22,12 +22,16 @@ for h in ${fixups}; do
 
   if [ -z "${earliest}" ]; then
     earliest=${orig}
-  elif [ -z "$(git log --oneline "${earliest}".."${orig}")" ]; then
+  elif [ -z "$(git log -1 --oneline "${earliest}".."${orig}")" ]; then
     earliest=${orig}
   fi
 done
 
 if [ -n "${earliest}" ]; then
+  if [ -z "$(git log -1 --oneline "${main_branch}".."${earliest}")" ]; then
+    echo "${earliest} is before remote main branch. Refusing to fixup!" >&2
+    exit 1
+  fi
   GIT_EDITOR=true git rebase -i "${earliest}"^ --autosquash
 else
   echo "Nothing to do" >&2
