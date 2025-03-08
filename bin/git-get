@@ -1,8 +1,4 @@
 #!/bin/bash
-if [ "$#" -lt 1 ]; then
-  echo "Must have branch name"
-  exit 1
-fi
 
 remote=$(git config --get gitset.defaultremote)
 branch_prefix=$(git config --get gitset.branchPrefix)
