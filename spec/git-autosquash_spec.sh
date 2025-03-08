@@ -64,6 +64,8 @@ Describe 'git-autosquash'
         echo "fixup! A different commit"
       elif [[ "$*" == 'rev-parse d4597b22^{/^A\ different\ commit}' ]]; then
         echo "8a6fcd6d"
+      elif [[ "$*" == 'log -1 --oneline refs/remotes/origin/HEAD..8a6fcd6d' ]]; then
+        echo "d4597b22 A different commit"
       elif [[ "$*" == 'rebase -i 8a6fcd6d^ --autosquash' ]]; then
         exit 0
       else
@@ -75,6 +77,31 @@ Describe 'git-autosquash'
     When call git-autosquash
     The output should equal ''
     The status should be success
+  End
+
+  It 'log with single fixup rebases'
+    Mock git
+      if [[ "$*" == 'config --get gitautosquash.remote' ]]; then
+        exit 0
+      elif [[ "$*" == 'log --grep ^fixup!  --pretty=format:%H %s refs/remotes/origin/HEAD..HEAD' ]]; then
+        echo "d4597b22 fixup! A different commit"
+      elif [[ "$*" == 'log -1 --pretty=format:%s d4597b22' ]]; then
+        echo "fixup! A different commit"
+      elif [[ "$*" == 'rev-parse d4597b22^{/^A\ different\ commit}' ]]; then
+        echo "8a6fcd6d"
+      elif [[ "$*" == 'log -1 --oneline refs/remotes/origin/HEAD..8a6fcd6d' ]]; then
+        exit 0
+      elif [[ "$*" == 'rebase -i 8a6fcd6d^ --autosquash' ]]; then
+        exit 0
+      else
+        echo "Unexpected params: $*" >&2
+        exit 1
+      fi
+    End
+
+    When call git-autosquash
+    The stderr should equal '8a6fcd6d is before remote main branch. Refusing to fixup!'
+    The status should not be success
   End
 
   It 'log with multiple fixups should rebase the earliest'
@@ -101,6 +128,8 @@ Describe 'git-autosquash'
         echo "be0fdf16 A commit"
       elif [[ "$*" == 'log -1 --oneline 8a6fcd6d..f29c8f21' ]]; then
         exit 0
+      elif [[ "$*" == 'log -1 --oneline refs/remotes/origin/HEAD..f29c8f21' ]]; then
+        echo "f29c8f21 More changes"
       elif [[ "$*" == 'rebase -i f29c8f21^ --autosquash' ]]; then
         exit 0
       else
