@@ -1,0 +1,61 @@
+.Dd $Mdocdate$
+.Dt GIT-BRANCHES 1
+.Os
+.Sh NAME
+.Nm git-branches
+.Nd List remote branches matching the currently configured parameters
+.Sh SYNOPSIS
+.Nm git-branches
+.Sh DESCRIPTION
+This utility lists all remote branches on a remote with a prefix.
+.sp
+This call effectively boils down to
+.Ql git branch -a -l <gitset.defaultremote>/[gitset.branchPrefix]*
+.sp
+.Sh CONFIGURATION
+This command requires that a remote is configured via the
+.Sy gitset.defaultremote
+configuration
+.sp
+The following is copied from
+.Xr git-set 1
+.sp
+.Bl -tag -width Ds
+.It Sy gitset.defaultremote
+The remote to push to.
+Must be a registered remote.
+If
+.Ql origin
+a
+.Sy gitset.branchPrefix
+is strongly recommended!
+.sp
+Example usage
+.Ql git config --global gitset.defaultremote my-cool-remote
+.sp
+.It Sy gitset.branchPrefix
+A prefix to use for all generated branch names.
+.sp
+Example
+.Ql my-username/
+.sp
+.It Sy gitset.allowOriginWoPrefix
+Setting
+.Sy gitset.defaultremote
+to
+.Ql origin
+while having no
+.Sy gitset.branchPrefix
+can be very dangerous.
+This setting allows the caller to opt out of this warning.
+.El
+.sp
+.Sh SEE ALSO
+.Xr git-get 1 ,
+.Xr git-set 1
+.Sh GIT-EXTRA
+Part of the
+.Sy git-extra
+suite, tied to
+.Xr git-set 1
+utility

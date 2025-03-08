@@ -1,0 +1,91 @@
+.Dd $Mdocdate$
+.Dt GIT-GET 1
+.Os
+.Sh NAME
+.Nm git-get
+.Nd Reset current branch to remote branch
+.Sh SYNOPSIS
+.Nm git get
+.Op <options>
+.Op Ar <branch-name>
+.Nm git get
+.Fl i
+.Op <options>
+.Sh DESCRIPTION
+A wrapper around
+.Xr git-reset 1
+that provides utilities for changing remote branch HEAD points to.
+.sp
+Must be configured before it will work.
+Needs
+.Sy gitset.defaultremote
+to know which remote to update.
+.sp
+.Sh OPTIONS
+.Bl -tag -width Ds
+.It Fl i
+Interactive mode.
+Use
+.Xr git-branches 1
+to list matching remote branches and offers the user the choice which one to
+reset to.
+.sp
+.It Fl f
+By default, exits with a warning if uncommited changes are present, or if the
+current HEAD is not referenced by any remote branch.
+This flags overrides this check.
+.sp
+.It Ar <branch-name>
+Reset to the branch matching the specified name.
+.El
+.sp
+.Sh CONFIGURATION
+The following is copied from
+.Xr git-set 1
+.Xr git 1
+supports configuration to be stored per repository or globally.
+The
+.Xr git-config 1
+flag
+.Ql Fl -global
+controls this.
+.sp
+.Bl -tag -width Ds
+.It Sy gitset.defaultremote
+The remote to push to.
+Must be a registered remote.
+If
+.Ql origin
+a
+.Sy gitset.branchPrefix
+is strongly recommended!
+.sp
+Example usage
+.Ql git config --global gitset.defaultremote my-cool-remote
+.sp
+.It Sy gitset.branchPrefix
+A prefix to use for all generated branch names.
+.sp
+Example
+.Ql my-username/
+.sp
+.It Sy gitset.allowOriginWoPrefix
+Setting
+.Sy gitset.defaultremote
+to
+.Ql origin
+while having no
+.Sy gitset.branchPrefix
+can be very dangerous.
+This setting allows the caller to opt out of this warning.
+.El
+.sp
+.Sh SEE ALSO
+.Xr git-branches 1 ,
+.Xr git-set 1
+.Sh GIT-EXTRA
+Part of the
+.Sy git-extra
+suite, tied to
+.Xr git-set 1
+utility

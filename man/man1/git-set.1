@@ -1,0 +1,88 @@
+.Dd $Mdocdate$
+.Dt GIT-SET 1
+.Os
+.Sh NAME
+.Nm git-set
+.Nd Update single remote branch
+.Sh SYNOPSIS
+.Nm git set
+.Op <options>
+.Ar <branch-name>
+.Op Ar <commit-ref>
+.Nm git set
+.Fl g
+.Op <options>
+.Op Ar <commit-ref>
+.Sh DESCRIPTION
+A wrapper around git push that provides some utilities with regards to branch
+naming and updating.
+.Ar <commit-ref>
+defaults to HEAD unless specified
+.sp
+Must be configured before it will work.
+Needs
+.Sy gitset.defaultremote
+to know which remote to update.
+.sp
+.Sh OPTIONS
+.Bl -tag -width Ds
+.It -n, --dry-run
+Do not actually push anything, passed on to
+.Xr git-push 1 .
+.sp
+.It -g, --guess
+Use
+.Xr git-make-branchname 1
+to infer a branch name from the summary of the
+.Ar <commit-ref> .
+.sp
+.It -v, --verbose
+Print additional information
+.El
+.sp
+.Sh CONFIGURATION
+.Xr git 1
+supports configuration to be stored per repository or globally.
+The
+.Xr git-config 1
+flag
+.Ql Fl -global
+controls this.
+.sp
+.Bl -tag -width Ds
+.It Sy gitset.defaultremote
+The remote to push to.
+Must be a registered remote.
+If
+.Ql origin ,
+a
+.Sy gitset.branchPrefix
+is strongly recommended!
+.sp
+Example usage
+.Ql git config --global gitset.defaultremote my-cool-remote
+.sp
+.It Sy gitset.branchPrefix
+A prefix to use for all generated branch names.
+.sp
+Example
+.Ql my-username/
+.sp
+.It Sy gitset.allowOriginWoPrefix
+Setting
+.Sy gitset.defaultremote
+to
+.Ql origin
+while having no
+.Sy gitset.branchPrefix
+can be very dangerous.
+This setting allows the caller to opt out of this warning.
+.El
+.sp
+.Sh SEE ALSO
+.Xr git-branches 1 ,
+.Xr git-get 1
+.Sh GIT-EXTRA
+Part of the
+.Sy git-extra
+suite.
