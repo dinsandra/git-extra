@@ -97,9 +97,9 @@ Describe 'git-autosquash'
         echo "be0fdf16"
       elif [[ "$*" == 'rev-parse f4df6753^{/^More\ changes}' ]]; then
         echo "f29c8f21"
-      elif [[ "$*" == 'log --oneline 8a6fcd6d..be0fdf16' ]]; then
+      elif [[ "$*" == 'log -1 --oneline 8a6fcd6d..be0fdf16' ]]; then
         echo "be0fdf16 A commit"
-      elif [[ "$*" == 'log --oneline 8a6fcd6d..f29c8f21' ]]; then
+      elif [[ "$*" == 'log -1 --oneline 8a6fcd6d..f29c8f21' ]]; then
         exit 0
       elif [[ "$*" == 'rebase -i f29c8f21^ --autosquash' ]]; then
         exit 0
