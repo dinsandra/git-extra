@@ -104,17 +104,6 @@ End
 
 Describe 'git-conflicting edit'
   It 'should check after edit by default and fails with markers'
-    BeforeCall 'setup'
-    AfterCall 'cleanup'
-
-    setup() {
-      export GIT_EDITOR="my_editor"
-    }
-
-    cleanup() {
-      unset GIT_EDITOR
-    }
-
     Mock git 
       if [[ "$*" == 'status --porcelain=v2' ]]; then
         echo 'u UU N... 100644 100644 100644 100644 f8f6b11fa5513114e34153c8f84f2aa501368b72 bf324dde2ea1cff810d983f6df2366f234c0161b edafe6bc965dd1eef64045e1c805df06be66641b u.txt'
@@ -122,6 +111,8 @@ Describe 'git-conflicting edit'
         exit 0
       elif [[ "$*" == 'config --get gitconflicting.editor' ]]; then
         exit 0
+      elif [[ "$*" == 'var GIT_EDITOR' ]]; then
+        echo "my_editor"
       else
         echo "Unexpected params: $*" >&2
         exit 1
@@ -152,17 +143,6 @@ Describe 'git-conflicting edit'
   End
 
   It 'should skip check after edit with no check config flag'
-    BeforeCall 'setup'
-    AfterCall 'cleanup'
-
-    setup() {
-      export GIT_EDITOR="my_editor"
-    }
-
-    cleanup() {
-      unset GIT_EDITOR
-    }
-
     Mock git 
       if [[ "$*" == 'status --porcelain=v2' ]]; then
         echo 'u UU N... 100644 100644 100644 100644 f8f6b11fa5513114e34153c8f84f2aa501368b72 bf324dde2ea1cff810d983f6df2366f234c0161b edafe6bc965dd1eef64045e1c805df06be66641b u.txt'
@@ -172,6 +152,8 @@ Describe 'git-conflicting edit'
         exit 0
       elif [[ "$*" == 'add u.txt' ]]; then
         exit 0
+      elif [[ "$*" == 'var GIT_EDITOR' ]]; then
+        echo "my_editor"
       else
         echo "Unexpected params: $*" >&2
         exit 1

@@ -21,7 +21,7 @@ usage() {
   printf "\n"
   printf "\n    edit [--[no-]check] [-e|--editor>]"
   printf "\n        Open conflicting files in editor. Prefers parameter if passed"
-  printf "\n        otherwise falls back to GIT_EDITOR and then EDITOR env variables."
+  printf "\n        otherwise falls back to GIT_EDITOR git-var."
   printf "\n        After editing performs a check for conflict markers."
   printf "\n"
   printf "\n    ls"
@@ -106,7 +106,9 @@ check() {
 
 edit() {
   config_value=$(git config --get gitconflicting.editor)
-  editor=${editor_value:-${config_value:-${GIT_EDITOR:-${EDITOR}}}}
+  if [[ "${editor}" == "" ]]; then
+    editor="$(git var GIT_EDITOR)"
+  fi
   if [[ "${editor}" == "" ]]; then
     echo "No editor configured" >&2
     exit 1
