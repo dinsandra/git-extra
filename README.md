@@ -84,6 +84,17 @@ $ git config gitset.defaultremote origin
 $ git config gitset.branchPrefix my-prefix/
 ```
 
+### Completion
+
+The tools support limited completion support, which relies on git bash
+completion.
+
+Enable by adding the following to `.bash_profile` (or similar)
+
+```sh
+source /path/to/this/dir/completion/complete.sh
+```
+
 ## Testing
 
 This repository relies on [shellspec] to verify the functionality. To run tests
