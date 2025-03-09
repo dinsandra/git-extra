@@ -1,6 +1,6 @@
 # git-fixup
 
-This tool is effectively an alias for `git commit --fixup`, and lessens to
+This tool is effectively an alias for `git commit --fixup`, and lessens the
 amount of typing necessary when working with a rebase flow.
 
 Alternatively it can be used in interactive mode by specifying the option `-i`.
@@ -15,4 +15,4 @@ Select target: [q/0-9+]
 > 2
 [master 5ccafd2] fixup! fix(a-thing): Fix the a thing
  1 file changed, 1 insertion(+), 1 deletion(-)
-````
+```
