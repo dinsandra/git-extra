@@ -1,0 +1,30 @@
+.Dd $Mdocdate$
+.Dt GIT-CONTINUE 1
+.Os
+.Sh NAME
+.Nm git-continue
+.Nd A script to
+.Fl Fl continue
+a rebase, merge or cherry-pick
+.Sh SYNOPSIS
+.Nm git continue
+.Sh DESCRIPTION
+In order of preference:
+.Bl -enum -compact
+.It
+If a cherry-pick is in progress:
+.Ql git cherry-pick --continue .
+.It
+Else if a merge is in progress:
+.Ql git merge --continue .
+.It
+Else if a rebase is in progress:
+.Ql git rebase --continue .
+.It
+Else: Print error message.
+.El
+.sp
+.Sh GIT-EXTRA
+Part of the
+.Sy git-extra
+suite.

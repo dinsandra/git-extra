@@ -1,0 +1,78 @@
+.Dd $Mdocdate$
+.Dt GIT-CONFLICTING 1
+.Os
+.Sh NAME
+.Nm git-conflicting
+.Nd Operate on files with conflicts
+.Sh SYNOPSIS
+.Nm git conflicting
+.Op ls
+.Nm git conflicting add
+.Op <options>
+.Nm git conflicting edit
+.Op <options>
+.Sh DESCRIPTION
+This utility allows quick and easy operating on conflicting files.
+.sp
+More often than not, when there is a conflict what one wants to do
+is to open all the files with conflict, find the conflict markers
+and resolve them.
+.sp
+If there are any conflict markers left in files after editing them, or before
+adding them, the script will warn about this.
+.Sh COMMANDS
+With no arguments does the same thing as the ls command.
+.sp
+.Bl -tag -width Ds
+.It Op ls
+Print the paths of all conflicting files.
+.It Xo add
+.Op Fl Fl [no-]check
+.Xc
+Add all conflicting files.
+Performs a check for conflict markers.
+.It Xo edit
+.Op Fl Fl [no-]check
+.Oo Fl e |
+.Fl Fl editor
+.Oc
+.Xc
+Open conflicting files in editor.
+Prefers parameter if passed otherwise falls back to
+.Ev GIT_EDITOR
+.Xr git-var 1 .
+After editing performs a check for conflict markers.
+.El
+.Sh OPTIONS
+.Bl -tag -width Ds
+.It Xo Fl n ,
+.Fl Fl [no-]check
+.Xc
+By default some commands ensure that no conflict markers are present in
+conflicting files, this flag disables this.
+.sp
+.It Xo Fl e ,
+.Fl Fl editor
+.Xc
+The command to invoke to launch the editor.
+Files to open will be passed as command line arguments.
+.El
+.sp
+.Sh CONFIGURATION
+.Xr git 1
+supports configuration to be stored per repository or globally.
+The git config flag
+.Ql --global
+controls this.
+.sp
+.Bl -tag -width Ds
+.It Sy gitconflicting.check
+Whether to enable or disable check by default.
+.sp
+.It Sy gitconflicting.editor
+An editor to use by default.
+.El
+.Sh GIT-EXTRA
+Part of the
+.Sy git-extra
+suite.
