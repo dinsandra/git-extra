@@ -1,0 +1,67 @@
+.Dd $Mdocdate$
+.Dt GIT-AUTOSQUASH 1
+.Os
+.Sh NAME
+.Nm git-autosquash
+.Nd Automatically apply
+.Ql fixup\&!
+commits
+.Sh SYNOPSIS
+.Nm git-autosquash
+.Sh DESCRIPTION
+This utility automates application of
+.Ql fixup\&!
+commits.
+It finds the earliest commit that is targeted by the fixup commits and
+automatically calls
+.Ql git rebase -i <commit> --autosquash
+with the commit.
+It also sets
+.Ql GIT_EDITOR=true
+temporarily, which means that the interactivity is removed, but the TODO script
+is still executed, applying the fixups.
+.sp
+If a
+.Ql fixup\&!
+targets a commit that is already merged to the
+.Ql HEAD
+branch of
+.Sy gitautosquash.remote ,
+then the command will fail.
+It will also only consider commits that are not merged to the
+.Ql HEAD
+branch.
+.Sh EXAMPLES
+Let's assume we have the following history
+.Bl -inset -offset Ds -compact
+.It Ql bec7842 (HEAD -> master) fixup! commit4
+.It Ql 3f6efb1 fixup! commit3
+.It Ql b044169 commit4
+.It Ql 3ebda94 commit3
+.It Ql ea8ad74 (origin/master, origin/HEAD) commit2
+.It Ql f3ad622 commit1
+.El
+.sp
+At this point running the command
+.Ql git autosquash
+will identify
+.Ql commit3 (3ebda94)
+as the earliest commit targeted by a fixup.
+Which makes the command equivalent to running:
+.Ql GIT_EDITOR=true git rebase -i 3ebda94 --autosquash
+.sp
+.Sh CONFIGURATION
+.Bl -tag -width Ds
+.It Sy gitautosquash.remote
+The remote that is used for bounds for fixups.
+Defaults to
+.Ql origin .
+.El
+.sp
+.Sh SEE ALSO
+.Xr git-fixup 1 ,
+.Xr git-fixup-targets 1
+.Sh GIT-EXTRA
+Part of the
+.Sy git-extra
+suite.

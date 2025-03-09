@@ -2,7 +2,7 @@
 
 # A script that produces a valid branch name from the summary of a git commit
 # Usage:
-# git branchname [REF]
+# git make-branchname [REF]
 #
 # If REF is unspecified, defaults to HEAD
 #

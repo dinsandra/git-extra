@@ -1,0 +1,62 @@
+.Dd $Mdocdate$
+.Dt GIT-FIXUP 1
+.Os
+.Sh NAME
+.Nm git-fixup
+.Nd Quickly create
+.Ql fixup\&!
+commits
+.Sh SYNOPSIS
+.Nm git-fixup -i
+.Nm git-fixup <ref>
+.Sh DESCRIPTION
+This tool is effectively an alias for
+.Ql git commit --fixup ,
+and lessens the amount of typing necessary when working with a rebase flow.
+.sp
+Alternatively it can be used in interactive mode by specifying the option
+.Fl i .
+.Sh OPTIONS
+.Bl -tag -width Ds
+.It Fl i
+Interactive mode.
+Use
+.Xr git-fixup-targets 1
+to list potential fixup targets and offers the user the choice which one to use.
+.It Ar <ref>
+Creates a commit using the summary of
+.Ar <ref>
+prefixed with
+.Ql fixup!\ \&
+.El
+.sp
+.Sh EXAMPLES
+Interactive usage listing all
+.Xr git-fixup-targets 1 ,
+and letting you numerically choose the target.
+.Bl -inset -offset Ds -compact
+.It Ql git fixup -i
+.It Ql [1]: b9e0e78 (HEAD -> master) Here's a commit
+.It Ql [2]: 41f2c83 fix(a-thing): Fix the a thing
+.It Ql [3]: a32b218 More A
+.It Ql Select target: [q/0-9+]
+.It Ql > 2
+.It Ql [master 5ccafd2] fixup! fix(a-thing): Fix the a thing
+.It Ql  1 file changed, 1 insertion(+), 1 deletion(-)
+.El
+.sp
+.Sh CONFIGURATION
+.Bl -tag -width Ds
+.It Sy gitautosquash.remote
+The remote that is used for bounds for fixups.
+Defaults to
+.Ql origin .
+.El
+.sp
+.Sh SEE ALSO
+.Xr git-autosquash 1 ,
+.Xr git-fixup-targets 1
+.Sh GIT-EXTRA
+Part of the
+.Sy git-extra
+suite.

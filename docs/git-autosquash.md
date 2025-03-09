@@ -1,6 +1,5 @@
 # git-autosquash
 
-
 This utility automates application of `fixup!` commits. It finds the
 earliest commit that is targeted by the fixup commits and
 automatically calls `git rebase -i <commit> --autosquash` with the

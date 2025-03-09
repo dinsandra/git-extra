@@ -1,0 +1,63 @@
+.Dd $Mdocdate$
+.Dt GIT-FIXUP-TARGETS 1
+.Os
+.Sh NAME
+.Nm git-fixup-targets
+.Nd Enumerate all commits that change files in index
+.Sh SYNOPSIS
+.Nm git-fixup-targets
+.Sh DESCRIPTION
+A tool to enumerate potential fixup targets for
+.Xr git-fixup 1 .
+.sp
+Usually when working with the rebase workflow, the most recent commit that
+changed what is in the index is the desired target.
+This tool is essentially a glorified
+.Xr git-log 1
+invocation, listing matching commits.
+.Sh EXAMPLES
+Assume we have the following state:
+.Bl -inset -offset Ds -compact
+.It Ql git log --oneline --name-only --first-parent -5
+.It Ql 3e8c8a8b (HEAD -> master) Add to a
+.It Ql a.txt
+.It Ql bf78d007 Add to b
+.It Ql b.txt
+.It Ql 68a93a4d Merge remote-tracking branch 'origin/a-branch' into HEAD
+.It Ql c.txt
+.It Ql e2e967ee Change b
+.It Ql b.txt
+.It Ql ea8ad74 (origin/main, origin/HEAD) Fix b
+.It Ql b.txt
+.It \&
+.It Ql git diff --staged --name-only
+.It Ql b.txt
+.El
+.sp
+Making the following call would result in:
+.Bl -inset -offset Ds -compact
+.It Ql git fixup-targets
+.It Ql bf78d007 Add to b
+.El
+.sp
+Which is good, because it is the only "valid" target for a fixup.
+A commit that alters
+.Ql b.txt ,
+that is not past any merges or the remote
+.Ql HEAD .
+.sp
+.Sh CONFIGURATION
+.Bl -tag -width Ds
+.It Sy gitautosquash.remote
+The remote that is used for bounds for fixups.
+Defaults to
+.Ql origin .
+.El
+.sp
+.Sh SEE ALSO
+.Xr git-autosquash 1 ,
+.Xr git-fixup 1
+.Sh GIT-EXTRA
+Part of the
+.Sy git-extra
+suite.

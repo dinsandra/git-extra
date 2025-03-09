@@ -1,0 +1,58 @@
+.Dd $Mdocdate$
+.Dt GIT-MAKE-BRANCHNAME 1
+.Os
+.Sh NAME
+.Nm git-make-branchname
+.Nd A script that produces a valid branch name from the summary of a git commit
+.Sh SYNOPSIS
+.Nm git-make-branchname
+.Op Ar <ref>
+.Sh DESCRIPTION
+The script takes the summary from a commit and go through a set of steps to make
+it safe, and look prettier for use as a branch name.
+.sp
+.Bl -enum -width Ds -compact
+.It
+Read summary of
+.Ar <ref>
+.It
+Replace
+.Ql %
+with
+.Ql pct
+.It
+Replace any of
+.Ql [](){}. _/
+with
+.Ql -
+.It
+Convert to lowercase
+.It
+Remove any characters other than
+.Ql a-z0-9-
+.It
+Compact subsequent dashes into single dash
+.El
+.Sh OPTIONS
+.Bl -tag -width Ds
+.It Ar <ref>
+A reference to a commit from which to use the summary to create branch name.
+Defaults to
+.Ql HEAD
+.El
+.Sh EXAMPLES
+.Bl -inset -compact
+.It Ql Add new feature
+->
+.Ql add-new-feature
+.It Ql Roll out new feature to 100% of users
+->
+.Ql roll-out-new-feature-to-100pct-of-users
+.It Ql fix(system/component): Address memory issue
+->
+.Ql fix-system-component-address-memory-issue
+.El
+.Sh GIT-EXTRA
+Part of the
+.Sy git-extra
+suite
