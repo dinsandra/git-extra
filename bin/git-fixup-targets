@@ -14,7 +14,7 @@ if [[ -n "${first_merge}" ]]; then
   fi
 fi
 
-changes=$(git diff --staged --name-only)
+changes=$(git diff --staged --name-only --relative)
 
 if [[ -z "${changes}" ]]; then
   echo "Nothing matched" >&2
