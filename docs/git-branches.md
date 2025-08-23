@@ -1,4 +1,4 @@
-# git branches
+# git-branches
 
 List remote branches matching the currently configured parameters
 

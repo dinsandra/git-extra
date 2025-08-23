@@ -1,4 +1,4 @@
-# git get
+# git-get
 
 Shorthand for git reset --hard that goes with git-set
 
